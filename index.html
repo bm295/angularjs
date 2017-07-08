@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<head>
+	<title></title>
+	<meta http-equiv="Content-Type" content="text/html" charset="utf-8">
+	<script type="text/javascript" src="libs/angular.min.js"></script>
+</head>
+<body>
+	<div ng-app="myapp">
+		<div ng-controller="HeaderController">
+			<h2>Welcome {{data.title}} to {{data.website}}</h2>
+		</div>
+		<div ng-controller="ContentController">
+			<h2>Welcome {{data.title}} to {{data.website}}</h2>
+		</div>
+	</div>
+	<script>
+		angular.module("myapp", []).controller("HeaderController", function($scope){
+			$scope.data = {
+				title : "everyone",
+				website : "my blog"
+			};
+		}).controller("ContentController", function($scope){
+			$scope.data = {
+				title : "all",
+				website : "my website"
+			};
+		});
+	</script>
+</body>
+</html>

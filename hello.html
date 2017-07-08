@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta http-equiv="Content-Type" content="text/html" charset="utf-8">
+	<script type="text/javascript" src="libs/angular.min.js"></script>
+</head>
+<body ng-app="myapp">
+	<div ng-controller="MyController">
+		Input name: <input type="text" value="" ng-model="username">
+		<button ng-click='sayHi()'>Show hi message</button>
+		<br>
+		{{greeting}}
+	</div>
+	<script type="text/javascript">
+		angular.module('myapp', []).controller('MyController', ['$scope', function($scope){
+			$scope.sayHi = function(){
+				$scope.greeting = 'Hi ' + $scope.username + "!";
+			};
+		}]);
+	</script>
+</body>
+</html>

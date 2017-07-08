@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta http-equiv="Content-Type" content="text/html" charset="utf-8">
+	<script type="text/javascript" src="libs/angular.min.js"></script>
+</head>
+<body ng-app="myapp">
+	<div ng-controller="WebInformation">
+		<p>
+			Owner: {{data.fullname}}<br/>
+			Email: {{data.email}}<br/>
+			Phone: {{data.phone}}<br/>
+			Topic: {{data.topic}}<br/>
+			Website: {{data.website}}<br/>
+		</p>
+	</div>
+	<script type="text/javascript">
+		angular.module('myapp', []).controller('WebInformation', function($scope){
+			$scope.data = {
+				fullname: "John Smith",
+				email: "a@b.com",
+				phone: "12345",
+				topic: "Online Tuts",
+				website: "mytuts.com"
+			};
+		});
+	</script>
+</body>
+</html>

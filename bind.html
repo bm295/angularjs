@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Directive Example</title>
+	<script type="text/javascript" src="libs/angular.min.js"></script>
+	<script type="text/javascript">
+		angular.module("myapp", []).
+			controller("MyController", function($scope) {
+				$scope.name = "Welcome to A!"
+			});
+	</script>
+</head>
+<body ng-app="myapp">
+<div ng-controller="MyController">
+	<h2>Enter content:</h2>
+	<input ng-model="name">
+	<br>
+	<h2>Your content:</h2>
+	<span ng-bind="name"></span>
+</div>
+</body>
+</html>

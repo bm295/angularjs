@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<script type="text/javascript" src="libs/angular.min.js"></script>
+	<script type="text/javascript">
+		angular.module('myapp', []).
+			controller('mycontroller', function($scope) {}).
+			directive('mydirective', function() {
+				return {
+					template: '<h1>Hello!</h1>'
+				};
+			});
+	</script>
+</head>
+<body ng-app="myapp">
+<div ng-controller="mycontroller">
+	<div mydirective></div>
+</div>
+</body>
+</html>

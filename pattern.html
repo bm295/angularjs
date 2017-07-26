@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript" src="libs/angular.min.js"></script>
+	<script type="text/javascript">
+		angular.module('MyForm', []).
+			controller('ExampleController', ['$scope', function($scope){}]);
+	</script>
+	<style type="text/css">
+		.my-input {
+			-webkit-transition: all linear 0.5s;
+			transition: all linear 0.5s;
+			background: transparent;
+		}
+		.my-input.ng-invalid {
+			color: white;
+			background: red;
+		}
+	</style>
+</head>
+<body ng-app="MyForm">
+<form name="testForm" ng-controller="ExampleController">
+	<h2>Please enter numbers only</h2>
+	<input ng-model="val" ng-pattern="/^\d+$/" name="anim" class="my-input">
+</form>
+</body>
+</html>

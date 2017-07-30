@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8">
+	<script type="text/javascript" src="libs/angular.min.js"></script>
+	<style type="text/css">
+		*{margin: 0;}
+		body {padding: 20px}
+		.my-input {
+			-webkit-transition: all linear 0.5s;
+			transition: all linear 0.5s;
+			background: transparent;
+		}
+		.my-input.ng-invalid {
+			color: white;
+			background: red;
+		}
+	</style>
+	<script type="text/javascript">
+		angular.module('MyForm', []).
+			controller('ExampleController', ['$scope', function($scope) {
+				$scope.message = {
+					title: 'Simple Calculator',
+					num1: '1st number',
+					num2: '2nd number',
+					plus: "Plus",
+					minus: "Minus",
+					multiply: "Multiply",
+					divide: "Divide"
+				};
+				$scope.styleresult = 'display:none';
+				$scope.show_result = function() {
+					if ($scope.calForm.$valid) {
+						$scope.styleresult = 'display:block';
+						$scope.result = {
+							plus: parseInt($scope.num1) + parseInt($scope.num2),
+							minus: parseInt($scope.num1) - parseInt($scope.num2),
+							multiply: parseInt($scope.num1) * parseInt($scope.num2),
+							divide: parseInt($scope.num1) / parseInt($scope.num2)
+						};
+					}
+					else {
+						$scope.styleresult = "display:none";
+					}
+				};
+			}]);
+	</script>
+</head>
+<body ng-app="MyForm">
+	<form name="calForm" ng-controller="ExampleController">
+		<h2>{{message.title}}</h2>
+		<h5>{{message.num1}}:</h5>
+		<input ng-model="num1" ng-required="true" ng-pattern="/^[0-9]+$/" class="my-input" ng-keyup="show_result()" />
+		<h5>{{message.num2}}:</h5>
+		<input ng-model="num2" ng-required="true" ng-pattern="/^[0-9]+$/" class="my-input" ng-keyup="show_result()" />
+		<div style="{{styleresult}}">
+			{{message.plus}} {{result.plus}}<br/>
+			{{message.minus}} {{result.minus}}<br/>
+			{{message.multiply}} {{result.multiply}}<br/>
+			{{message.divide}} {{result.divide}}
+		</div>
+	</form>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Directive example</title>
+	<style type="text/css">
+		*{margin: 0}
+		body {padding: 20px}
+	</style>
+	<script type="text/javascript" src="libs/angular.min.js"></script>
+	<script type="text/javascript">
+		angular.module("myapp", []).
+			controller("optionsController", ["$scope", function($scope){}]);
+	</script>
+</head>
+<body ng-app="myapp">
+	<div ng-controller="optionsController">
+		<form name="userForm">
+			<h5>Enter the announcement for village</h5>
+			<input type="text" name="announcement" ng-model="announcement.content" />
+			<br/>
+			<h5>This is the announcement</h5>
+			<span ng-bind="announcement.content"></span>
+		</form>
+	</div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+.app-shell {
+  font-family: Arial, sans-serif;
+  margin: 1.5rem;
+}
+
+.feature-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}

@@ -1,0 +1,8 @@
+<section>
+  <h2>Order List</h2>
+  <ul>
+    <li *ngFor="let order of orders">
+      #{{ order.id || 'new' }} - {{ order.items.length }} item(s)
+    </li>
+  </ul>
+</section>

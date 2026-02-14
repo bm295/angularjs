@@ -1,0 +1,51 @@
+<section class="web-info" *ngIf="vm$ | async as vm">
+  <div class="panel">
+    <h2>Contacts</h2>
+
+    <input
+      class="search"
+      type="text"
+      [formControl]="searchControl"
+      placeholder="Search by owner, topic, email, website"
+    />
+
+    <ul class="contact-list" *ngIf="vm.contacts.length; else emptyState">
+      <li
+        *ngFor="let contact of vm.contacts"
+        class="contact-item"
+        [class.active]="vm.selected?.id === contact.id"
+        (click)="selectContact(contact.id)"
+      >
+        <div class="name">{{ contact.fullname }}</div>
+        <div class="topic">{{ contact.topic }}</div>
+      </li>
+    </ul>
+
+    <ng-template #emptyState>
+      <p class="empty">No matching contact.</p>
+    </ng-template>
+  </div>
+
+  <div class="panel">
+    <h2>Web Information</h2>
+
+    <ng-container *ngIf="vm.selected as selected; else noSelection">
+      <p><strong>Owner:</strong> {{ selected.fullname }}</p>
+      <p><strong>Email:</strong> {{ selected.email }}</p>
+      <p><strong>Phone:</strong> {{ selected.phone }}</p>
+      <p><strong>Topic:</strong> {{ selected.topic }}</p>
+      <p><strong>Website:</strong> {{ selected.website }}</p>
+      <p>
+        <strong>Status:</strong>
+        <span class="status" [class.online]="vm.status === 'Online'" [class.offline]="vm.status === 'Offline'">
+          {{ vm.status }}
+        </span>
+      </p>
+      <small>Status refreshes every 4 seconds.</small>
+    </ng-container>
+
+    <ng-template #noSelection>
+      <p>No contact selected.</p>
+    </ng-template>
+  </div>
+</section>

@@ -1,0 +1,18 @@
+.home-hero {
+  margin-bottom: 1rem;
+}
+
+.home-hero h1 {
+  margin: 0 0 0.5rem;
+}
+
+.home-hero p {
+  margin: 0;
+  color: #555;
+}
+
+.feature-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}

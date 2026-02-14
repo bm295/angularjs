@@ -1,0 +1,15 @@
+.legacy-panel {
+  border: 1px solid #d7d7d7;
+  border-radius: 8px;
+  padding: 1rem;
+  background: #fff;
+}
+
+.legacy-panel h1 {
+  margin: 0 0 0.5rem;
+}
+
+.legacy-panel p {
+  margin: 0 0 0.75rem;
+  color: #555;
+}

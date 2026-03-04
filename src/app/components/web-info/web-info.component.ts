@@ -1,7 +1,8 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, effect, signal } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl } from '@angular/forms';
-import { BehaviorSubject, Subject, combineLatest, interval } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, startWith, takeUntil } from 'rxjs/operators';
+import { combineLatest, interval } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs/operators';
 
 import { WebContact } from '../../models/web-contact';
 
@@ -18,7 +19,7 @@ interface WebInfoVm {
   templateUrl: './web-info.component.html',
   styleUrls: ['./web-info.component.css']
 })
-export class WebInfoComponent implements OnDestroy {
+export class WebInfoComponent {
   readonly searchControl = new FormControl('', { nonNullable: true });
 
   private readonly contacts: WebContact[] = [
@@ -29,8 +30,8 @@ export class WebInfoComponent implements OnDestroy {
     { id: 5, fullname: 'David Park', email: 'david@uxhub.design', phone: '61616', topic: 'UX Hub', website: 'uxhub.design' }
   ];
 
-  private readonly selectedId$ = new BehaviorSubject<number>(this.contacts[0].id);
-  private readonly destroy$ = new Subject<void>();
+  private readonly selectedId = signal<number>(this.contacts[0].id);
+  private readonly selectedId$ = toObservable(this.selectedId);
 
   readonly filteredContacts$ = this.searchControl.valueChanges.pipe(
     startWith(this.searchControl.value),
@@ -64,22 +65,19 @@ export class WebInfoComponent implements OnDestroy {
     map(([contacts, selected, status]) => ({ contacts, selected, status }) as WebInfoVm)
   );
 
-  constructor() {
-    this.selectedContact$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((selected) => {
-        if (selected && this.selectedId$.value !== selected.id) {
-          this.selectedId$.next(selected.id);
-        }
-      });
-  }
+  private readonly selectedContactSignal = toSignal(this.selectedContact$, { initialValue: null });
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  constructor() {
+    effect(() => {
+      const selected = this.selectedContactSignal();
+
+      if (selected && this.selectedId() !== selected.id) {
+        this.selectedId.set(selected.id);
+      }
+    });
   }
 
   selectContact(id: number): void {
-    this.selectedId$.next(id);
+    this.selectedId.set(id);
   }
 }

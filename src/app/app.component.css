@@ -1,26 +1,5 @@
-.app-shell {
-  font-family: Arial, sans-serif;
-  margin: 1.5rem;
-}
-
-.app-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.25rem;
-}
-
-.brand {
-  font-weight: 700;
-  font-size: 1.1rem;
-}
-
-.legacy-link {
-  color: #0b61a4;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.legacy-link:hover {
-  text-decoration: underline;
-}
+:host{display:block;min-height:100vh;background:#f2f4f7;color:#101828;font-family:Arial,sans-serif}
+header{padding:16px 24px;background:#101828;color:#fff}
+nav{display:flex;gap:16px;flex-wrap:wrap}
+a{color:#d1e9ff;text-decoration:none}
+a:hover{text-decoration:underline}

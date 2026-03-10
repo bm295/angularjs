@@ -1,0 +1,35 @@
+<section class="page" *ngIf="vm$ | async as vm">
+  <h1>Operations Control Tower</h1>
+
+  <div class="kpi-grid">
+    <app-kpi-card label="Revenue Today" [value]="(vm.kpi.revenueToday | currency:'VND':'symbol':'1.0-0') ?? ''"></app-kpi-card>
+    <app-kpi-card label="Orders Today" [value]="vm.kpi.ordersToday.toString()"></app-kpi-card>
+    <app-kpi-card label="Average Order Value" [value]="(vm.kpi.averageOrderValue | currency:'VND':'symbol':'1.0-0') ?? ''"></app-kpi-card>
+    <app-kpi-card label="Payment Success Rate" [value]="(vm.kpi.paymentSuccessRate / 100 | percent:'1.1-1') ?? ''"></app-kpi-card>
+  </div>
+
+  <div class="panel">
+    <h2>Branches Performance</h2>
+    <table>
+      <thead><tr><th>Branch</th><th>Region</th><th>Revenue</th><th>Orders</th><th>Conversion</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let branch of vm.branches">
+          <td>{{ branch.branch }}</td>
+          <td>{{ branch.region }}</td>
+          <td>{{ branch.revenue | currency:'VND':'symbol':'1.0-0' }}</td>
+          <td>{{ branch.orders }}</td>
+          <td>{{ branch.conversion }}%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h2>Alerts</h2>
+    <ul>
+      <li *ngFor="let alert of vm.alerts">
+        ⚠ <strong>[{{ alert.severity | uppercase }}]</strong> {{ alert.message }} - {{ alert.branch }} ({{ alert.time }})
+      </li>
+    </ul>
+  </div>
+</section>

@@ -1,6 +1,0 @@
-.page{padding:24px;display:grid;gap:20px;background:#f8fafc;min-height:100%}
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-.panel{background:#fff;border:1px solid #e4e7ec;border-radius:12px;padding:16px}
-table{width:100%;border-collapse:collapse}
-th,td{padding:8px;border-bottom:1px solid #eaecf0;text-align:left}
-ul{margin:0;padding-left:18px}

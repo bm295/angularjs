@@ -1,14 +1,32 @@
-<main class="shell">
-  <header>
-    <h1>Business Operations Monitoring Platform</h1>
-    <nav>
-      <a routerLink="/dashboard">Dashboard</a>
-      <a routerLink="/operations">Operations</a>
-      <a routerLink="/alerts">Alerts</a>
-      <a routerLink="/branches">Branches</a>
-      <a routerLink="/revenue">Revenue Drill-down</a>
-    </nav>
-  </header>
+<main class="page">
+  <section class="hero">
+    <h1>Angular Lifecycle Demo: <code>constructor()</code></h1>
+    <p>
+      Click the button to destroy and recreate the child component.
+      Every recreation triggers the child's <code>constructor()</code> and adds a new log entry.
+    </p>
+    <button type="button" (click)="recreateChild()">Recreate child component</button>
+  </section>
 
-  <router-outlet></router-outlet>
+  <section class="visualization">
+    <h2>Live constructor visualization</h2>
+    @if (showChild()) {
+      <constructor-child (constructed)="onChildConstructed($event)"></constructor-child>
+    } @else {
+      <p class="placeholder">Child component destroyed. Angular will recreate it immediately...</p>
+    }
+  </section>
+
+  <section class="log">
+    <h2>Execution log</h2>
+    <ol>
+      @for (entry of entries(); track $index) {
+        <li>
+          <span class="time">{{ entry.timestamp }}</span>
+          <strong>{{ entry.source }}</strong>
+          <span>{{ entry.message }}</span>
+        </li>
+      }
+    </ol>
+  </section>
 </main>

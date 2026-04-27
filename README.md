@@ -1,17 +1,18 @@
-# Operations Control Tower (Angular 19)
+# Angular 19 Constructor Lifecycle Demo
 
-Ung dung dashboard theo doi van hanh doanh nghiep realtime.
+This repository is a focused Angular 19 demo that visualizes the **first lifecycle step: `constructor()`**.
 
-## Chay local
+## What the demo shows
+
+- The root `AppComponent` constructor logs when Angular creates the app.
+- A child component can be destroyed and recreated with a button.
+- Every recreation triggers the child `constructor()` and writes a timestamped event to the UI log.
+
+## Run locally
+
 ```bash
 npm install
 npm start
 ```
 
-## Build
-```bash
-npm run build
-```
-
-## Requirement
-Xem chi tiet tai `REQUIREMENTS.md`.
+Open `http://localhost:4200`.

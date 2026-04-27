@@ -1,5 +1,60 @@
-:host{display:block;min-height:100vh;background:#f2f4f7;color:#101828;font-family:Arial,sans-serif}
-header{padding:16px 24px;background:#101828;color:#fff}
-nav{display:flex;gap:16px;flex-wrap:wrap}
-a{color:#d1e9ff;text-decoration:none}
-a:hover{text-decoration:underline}
+:host {
+  color: #e5e7eb;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+}
+
+.page {
+  min-height: 100vh;
+  padding: 2rem;
+  background: radial-gradient(circle at top, #1f2937, #030712 70%);
+  display: grid;
+  gap: 1.25rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.hero,
+.visualization,
+.log {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid #334155;
+  border-radius: 14px;
+  padding: 1.2rem;
+}
+
+button {
+  margin-top: 1rem;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  border: 0;
+  background: #3b82f6;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.child-card,
+.placeholder {
+  margin-top: 0.75rem;
+  padding: 1rem;
+  border-radius: 10px;
+  background: #0f172a;
+  border: 1px solid #475569;
+}
+
+ol {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+li {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.time {
+  color: #93c5fd;
+  font-size: 0.8rem;
+}

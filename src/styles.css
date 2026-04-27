@@ -1,5 +1,12 @@
-html,
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  padding: 0;
+  background: #020617;
+}
+
+code {
+  font-family: 'JetBrains Mono', Consolas, monospace;
 }

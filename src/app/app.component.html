@@ -1,47 +1,303 @@
-<main class="game-shell">
+<main class="game-shell" [class.house-mode]="scene() === 'house'">
   <header class="topbar">
-    <div class="brand"><span class="brand-mark">🌿</span><div><strong>MỘC LAN</strong><small>FARM STORY</small></div></div>
-    <div class="day-card"><span>{{ state().weather === 'Nắng' ? '☀️' : '🌧️' }}</span><div><b>{{ seasons[state().season] }} · Ngày {{ state().day }}</b><small>Năm {{ state().year }} &nbsp; {{ clock() }}</small></div></div>
-    <div class="status"><div class="money">🪙 <b>{{ state().money }}</b><small> G</small></div><div class="energy"><span>THỂ LỰC</span><div class="meter"><i [style.width.%]="state().stamina"></i></div><b>{{ state().stamina }}</b></div></div>
+    <div class="brand">
+      <span class="brand-mark">🌿</span>
+      <div><strong>MỘC LAN</strong><small>FARM STORY</small></div>
+    </div>
+    <div class="day-card">
+      <span>{{ state().weather === 'Nắng' ? '☀️' : '🌧️' }}</span>
+      <div>
+        <b>{{ weekdays[weekdayIndex()] }} · {{ seasons[state().season] }} {{ state().day }}</b>
+        <small>Năm {{ state().year }} &nbsp; {{ clock() }}</small>
+      </div>
+    </div>
+    <div class="status">
+      <div class="money">🪙 <b>{{ state().money }}</b><small> G</small></div>
+      <div class="energy">
+        <span>THỂ LỰC</span>
+        <div class="meter"><i [style.width.%]="state().stamina"></i></div>
+        <b>{{ state().stamina }}</b>
+      </div>
+    </div>
     <button class="menu-button" type="button" (click)="showMenu.set(!showMenu())" aria-label="Mở menu">☰</button>
   </header>
 
-  <section class="storybar"><span class="portrait">👴🏻</span><div><b>Thị trưởng Thomas</b><p>“Cháu có 3 năm để khôi phục nông trại này. Hãy khiến dân làng tự hào nhé!”</p></div><button type="button" (click)="showGuide.set(true)">Nhật ký nhiệm vụ ›</button></section>
-
-  <section class="world" aria-label="Nông trại Mộc Lan">
-    <div class="mountains"></div><div class="cloud cloud-one">☁</div><div class="cloud cloud-two">☁</div>
-    <div class="farmhouse"><div class="roof"></div><div class="chimney"></div><div class="house-face"><span class="window">✦</span><span class="door">🚪</span></div><div class="house-sign">MỘC LAN</div></div>
-    <div class="tree tree-a">🌳</div><div class="tree tree-b">🌳</div><div class="tree tree-c">🌲</div>
-    <button class="ellie character" type="button" (click)="talkToEllie()"><span>♥</span>👩🏻‍🌾<small>Ellie</small></button>
-    <div class="farmer character">🧑🏻‍🌾<small>{{ state().farmerName }}</small></div>
-    <button class="log-pile" type="button" (click)="chopWood()">🪵<small>Gỗ +2</small></button>
-    <div class="field" aria-label="Ruộng trồng cây">
-      @for (plot of state().plots; track plot.id) {
-        <button type="button" class="plot" [class]="'plot ' + plot.state" [class.watered]="plot.watered" (click)="interact(plot.id)" [attr.aria-label]="'Ô đất ' + (plot.id + 1)">
-          @if (plot.state === 'seeded') { <span>· · ·</span> }
-          @if (plot.state === 'growing') { <span>🌱</span> }
-          @if (plot.state === 'ready') { <span>🥬</span> }
-        </button>
-      }
-    </div>
-    <div class="pond">🐟<span></span></div>
-    <button class="shipping" type="button" (click)="sellProduce()"><span>📦</span><b>THÙNG HÀNG</b><small>Bán {{ state().turnips }} củ cải</small></button>
-    <button class="shop" type="button" (click)="buySeeds()"><span>🛒</span><b>CỬA HÀNG</b><small>6 hạt · 120G</small></button>
-    <div class="fence">╫ ╫ ╫ ╫ ╫ ╫ ╫ ╫ ╫ ╫ ╫ ╫</div>
+  <section class="storybar">
+    @if (scene() === 'farm') {
+      <span class="portrait">👴🏻</span>
+      <div><b>Thị trưởng Thomas</b><p>“Ngôi nhà là nơi hành trình bắt đầu. Hãy ghé vào nghỉ ngơi sau một ngày làm việc nhé!”</p></div>
+      <button type="button" (click)="showGuide.set(true)">Nhật ký nhiệm vụ ›</button>
+    } @else {
+      <span class="portrait home-portrait">🏡</span>
+      <div><b>Nhà của {{ state().farmerName }} · Cấp {{ state().houseLevel }}</b><p>“Một góc nhỏ bình yên, nơi mọi kỷ niệm của nông trại được cất giữ.”</p></div>
+      <button type="button" (click)="leaveHouse()">Ra nông trại ›</button>
+    }
   </section>
 
-  <section class="message"><span class="message-icon">💬</span><p>{{ notice() }}</p><div class="inventory"><span title="Hạt giống">🌱 {{ state().seeds }}</span><span title="Củ cải">🥬 {{ state().turnips }}</span><span title="Gỗ">🪵 {{ state().wood }}</span><span title="Tình cảm Ellie">♥ {{ state().affection }}</span></div></section>
+  @if (scene() === 'farm') {
+    <section class="world" aria-label="Nông trại Mộc Lan">
+      <div class="mountains"></div><div class="cloud cloud-one">☁</div><div class="cloud cloud-two">☁</div>
+      <button class="farmhouse" type="button" (click)="enterHouse()" aria-label="Vào căn nhà">
+        <span class="roof"></span><span class="chimney"></span>
+        <span class="house-face"><span class="window">✦</span><span class="door">🚪</span></span>
+        <span class="house-sign">MỘC LAN</span><span class="enter-house">VÀO NHÀ</span>
+      </button>
+      <div class="tree tree-a">🌳</div><div class="tree tree-b">🌳</div><div class="tree tree-c">🌲</div>
+      <button class="ellie character" type="button" (click)="talkToEllie()"><span>♥</span>👩🏻‍🌾<small>Ellie</small></button>
+      <div class="farmer character">🧑🏻‍🌾<small>{{ state().farmerName }}</small></div>
+      <button class="log-pile" type="button" [class.harvested]="!state().logAvailable" (click)="chopWood()" [attr.aria-label]="state().logAvailable ? 'Khúc gỗ, dùng rìu để chặt' : 'Gốc cây, chờ tới ngày mai'">{{ state().logAvailable ? '🪵' : '🪚' }}<small>{{ state().logAvailable ? 'Gỗ +2' : 'Ngày mai' }}</small></button>
+      <div class="field" aria-label="Ruộng trồng cây">
+        @for (plot of state().plots; track plot.id) {
+          <button type="button" class="plot" [class]="'plot ' + plot.state" [class.watered]="plot.watered" (click)="interact(plot.id)" [attr.aria-label]="'Ô đất ' + (plot.id + 1)">
+            @if (plot.state === 'seeded') { <span>· · ·</span> }
+            @if (plot.state === 'growing') { <span>🌱</span> }
+            @if (plot.state === 'ready') { <span>🥬</span> }
+          </button>
+        }
+      </div>
+      <div class="pond">🐟<span></span></div>
+      <button class="shipping" type="button" (click)="sellProduce()"><span>📦</span><b>THÙNG HÀNG</b><small>Bán {{ state().turnips }} củ cải</small></button>
+      <button class="shop" type="button" (click)="buySeeds()"><span>🛒</span><b>CỬA HÀNG</b><small>6 hạt · 120G</small></button>
+      <div class="fence">╫ ╫ ╫ ╫ ╫ ╫ ╫ ╫ ╫ ╫ ╫ ╫</div>
+    </section>
+  } @else {
+    <section class="house-world" [class.house-expanded]="state().houseLevel >= 2" [class.house-family]="state().houseLevel === 3" aria-label="Bên trong căn nhà">
+      <div class="wallpaper"></div><div class="floorboards"></div><div class="ceiling-beam"></div>
+      <div class="sun-window" aria-hidden="true"><span>☁️</span><i></i><i></i></div>
+      <div class="level-plaque"><span>NGÔI NHÀ</span><b>CẤP {{ state().houseLevel }}</b><button type="button" (click)="openPanel('upgrade')">Nâng cấp</button></div>
 
-  <nav class="toolbar" aria-label="Túi công cụ">
-    <div class="tool-title"><small>TÚI ĐỒ</small><b>{{ selectedLabel() }}</b></div>
-    @for (tool of tools; track tool.id) { <button type="button" [class.active]="selectedTool() === tool.id" (click)="selectTool(tool.id)" [title]="tool.label"><span>{{ tool.icon }}</span><small>{{ tool.label }}</small></button> }
-    <button class="sleep" type="button" (click)="nextDay()"><span>🌙</span><small>Đi ngủ</small></button>
-  </nav>
+      <button class="room-object exit-door" type="button" (click)="leaveHouse()" aria-label="Ra nông trại">
+        <span class="door-panel"><i></i><i></i><em></em></span><small>Ra nông trại</small>
+      </button>
+
+      <button class="room-object bookshelf" type="button" (click)="openPanel('bookshelf')" aria-label="Dùng kệ sách để đổi điều khiển">
+        <span class="bookcase"><i>▥▥▥</i><i>▥▥▥</i><i>▥▥▥</i></span>
+        <small>Kệ sách<em>Đổi điều khiển</em></small>
+      </button>
+
+      <button class="room-object television" type="button" (click)="openPanel('television')" aria-label="Xem tivi">
+        <span class="tv-set"><span class="tv-screen"><i>{{ state().tomorrowWeather === 'Nắng' ? '☀' : '☂' }}</i><b>MỘC LAN TV</b></span><em></em></span>
+        <small>Tivi<em>3 chương trình</em></small>
+      </button>
+
+      <button class="room-object single-bed" type="button" (click)="sleepInBed()" aria-label="Ngủ trên chiếc giường đơn">
+        <span class="bed-frame"><i class="pillow"></i><i class="blanket"></i></span>
+        <small>Giường đơn<em>Đi ngủ</em></small>
+      </button>
+
+      <button class="room-object journal-table" type="button" (click)="openPanel('journal')" aria-label="Mở cuốn nhật ký để lưu game">
+        <span class="little-table"><i class="diary">NHẬT KÝ</i><em></em></span>
+        <small>Cuốn nhật ký<em>Lưu trò chơi</em></small>
+      </button>
+
+      <button class="room-object toolbox" type="button" (click)="openPanel('toolbox')" aria-label="Mở thùng dụng cụ">
+        <span class="tool-chest"><i></i><b>⚒</b></span>
+        <small>Thùng dụng cụ<em>{{ tools.length }} món · {{ state().seeds }} hạt</em></small>
+      </button>
+
+      @if (state().orderedItems.includes('flower-vase')) {
+        <div class="flower-vase" title="Bình hoa mua từ Shopping Channel">🌷<span></span></div>
+      }
+
+      @if (state().houseLevel === 3) {
+        <button class="room-object family-bed" type="button" (click)="sleepInBed()" aria-label="Ngủ trên chiếc giường đôi của gia đình">
+          <span class="bed-frame double"><i class="pillow one"></i><i class="pillow two"></i><i class="blanket"></i></span>
+          <small>Giường đôi<em>Cho cả gia đình</em></small>
+        </button>
+        <button class="room-object kitchen" type="button" (click)="openPanel('kitchen')" aria-label="Vào nhà bếp để nấu ăn">
+          <span class="kitchen-set"><i class="hood">⌂</i><i class="stove">● ●</i><i class="counter"></i></span>
+          <small>Nhà bếp<em>Nấu ăn</em></small>
+        </button>
+        <div class="family-corner" aria-label="Gia đình của bạn">
+          <button type="button" (click)="talkToFamily('wife')">👩🏻<small>Ellie</small></button>
+          <button type="button" (click)="talkToFamily('son')">🧒🏻<small>Ben</small></button>
+        </div>
+      } @else {
+        <div class="locked-extension"><span>🔒</span><b>Góc gia đình</b><small>Mở khóa ở nhà cấp 3</small></div>
+      }
+
+      <div class="indoor-farmer" aria-hidden="true">🧑🏻‍🌾<small>{{ state().farmerName }}</small></div>
+      <p class="room-tip">Chạm vào một món đồ để sử dụng</p>
+    </section>
+  }
+
+  <section class="message" aria-live="polite">
+    <span class="message-icon">💬</span><p>{{ notice() }}</p>
+    <div class="inventory">
+      <span title="Hạt giống">🌱 {{ state().seeds }}</span><span title="Củ cải">🥬 {{ state().turnips }}</span>
+      <span title="Gỗ">🪵 {{ state().wood }}</span><span title="Tình cảm Ellie">♥ {{ state().affection }}</span><span title="Cấp nhà">🏠 {{ state().houseLevel }}</span>
+    </div>
+  </section>
+
+  @if (scene() === 'farm') {
+    <nav class="toolbar" aria-label="Túi công cụ">
+      <div class="tool-title"><small>TÚI ĐỒ</small><b>{{ selectedLabel() }}</b><em>{{ selectedControl().bindings.previous.label }} / {{ selectedControl().bindings.next.label }} để đổi</em></div>
+      @for (tool of tools; track tool.id) {
+        <button type="button" [class.active]="selectedTool() === tool.id" [attr.aria-pressed]="selectedTool() === tool.id" (click)="selectTool(tool.id)" [title]="tool.label"><span>{{ tool.icon }}</span><small>{{ tool.label }}</small></button>
+      }
+      <button class="sleep" type="button" (click)="enterHouse()"><span>🏠</span><small>Về nhà</small></button>
+    </nav>
+  } @else {
+    <nav class="toolbar house-toolbar" aria-label="Thao tác nhanh trong nhà">
+      <div class="tool-title"><small>TRONG NHÀ</small><b>Nhà cấp {{ state().houseLevel }}</b><em>Chọn một vật dụng</em></div>
+      <button type="button" (click)="openPanel('toolbox')"><span>🧰</span><small>Dụng cụ</small></button>
+      <button type="button" (click)="openPanel('television')"><span>📺</span><small>Xem TV</small></button>
+      <button type="button" (click)="openPanel('bookshelf')"><span>📚</span><small>Điều khiển</small></button>
+      <button type="button" (click)="openPanel('journal')"><span>📖</span><small>Nhật ký</small></button>
+      @if (state().houseLevel === 3) { <button type="button" (click)="openPanel('kitchen')"><span>🍲</span><small>Nấu ăn</small></button> }
+      <button class="sleep" type="button" (click)="sleepInBed()"><span>🌙</span><small>Đi ngủ</small></button>
+      <button class="leave" type="button" (click)="leaveHouse()"><span>🚪</span><small>Ra ngoài</small></button>
+    </nav>
+  }
 
   @if (showMenu()) {
-    <div class="overlay" (click)="showMenu.set(false)"><section class="paper menu" (click)="$event.stopPropagation()"><button class="close" (click)="showMenu.set(false)">×</button><h2>🌿 Tạm dừng</h2><p>Nông trại Mộc Lan · Ngày {{ state().day }}</p><button (click)="saveGame()">💾 Lưu game xuống máy</button><label>📂 Tải file save<input type="file" accept=".json,.save" (change)="loadGame($event)"></label><button class="danger" (click)="newGame()">↻ Chơi lại từ đầu</button></section></div>
+    <div class="overlay" (click)="showMenu.set(false)">
+      <section class="paper menu" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="pause-title">
+        <button type="button" class="close" (click)="showMenu.set(false)" aria-label="Đóng">×</button>
+        <h2 id="pause-title">🌿 Tạm dừng</h2><p>Nông trại Mộc Lan · {{ weekday() }}, ngày {{ state().day }}</p>
+        <button type="button" (click)="saveGame()">💾 Lưu game thành file</button>
+        <label>📂 Tải file save<input type="file" accept=".json,.save" (change)="loadGame($event)"></label>
+        <button type="button" class="danger" (click)="newGame()">↻ Chơi lại từ đầu</button>
+      </section>
+    </div>
   }
+
   @if (showGuide()) {
-    <div class="overlay" (click)="showGuide.set(false)"><section class="paper guide" (click)="$event.stopPropagation()"><button class="close" (click)="showGuide.set(false)">×</button><span class="leaf">🌿</span><h2>Nhật ký nông trại</h2><p class="subtitle">MÙA XUÂN · NĂM 1</p><ul><li class="done">✓ Đến nhận nông trại từ Thị trưởng</li><li [class.done]="state().plots[0].state !== 'tilled'">Trồng vụ củ cải đầu tiên</li><li [class.done]="state().turnips > 0 || state().money > 500">Thu hoạch và bán nông sản</li><li [class.done]="state().affection >= 10">Kết bạn với người dân làng ({{ state().affection }}/10)</li></ul><div class="tip">💡 <span><b>Mẹo nhỏ</b><br>Cuốc đất → gieo hạt → tưới nước mỗi ngày. Sau 3 ngày, dùng Tay không để thu hoạch.</span></div></section></div>
+    <div class="overlay" (click)="showGuide.set(false)">
+      <section class="paper guide" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="guide-title">
+        <button type="button" class="close" (click)="showGuide.set(false)" aria-label="Đóng">×</button><span class="leaf">🌿</span>
+        <h2 id="guide-title">Nhật ký nông trại</h2><p class="subtitle">MÙA {{ seasons[state().season] }} · NĂM {{ state().year }}</p>
+        <ul>
+          <li class="done">✓ Đến nhận nông trại từ Thị trưởng</li>
+          <li [class.done]="state().plots[0].state !== 'tilled'">Trồng vụ củ cải đầu tiên</li>
+          <li [class.done]="state().turnips > 0 || state().money > 500">Thu hoạch và bán nông sản</li>
+          <li [class.done]="state().houseLevel >= 2">Nâng cấp căn nhà (cấp {{ state().houseLevel }}/3)</li>
+          <li [class.done]="state().affection >= 10">Kết bạn với dân làng ({{ state().affection }}/10)</li>
+        </ul>
+        <div class="tip">💡 <span><b>Mẹo nhỏ</b><br>Bấm vào căn nhà để đi ngủ, lưu nhật ký, xem TV và sắp xếp dụng cụ.</span></div>
+      </section>
+    </div>
+  }
+
+  @if (activePanel(); as panel) {
+    <div class="overlay house-overlay" (click)="closePanel()">
+      @switch (panel) {
+        @case ('bookshelf') {
+          <section class="paper house-panel controls-panel" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="controls-title">
+            <button type="button" class="close" (click)="closePanel()" aria-label="Đóng">×</button>
+            <span class="panel-kicker">KỆ SÁCH · CẨM NANG</span><h2 id="controls-title">Chọn kiểu điều khiển</h2>
+            <p class="panel-intro">Bộ phím mới có hiệu lực ngay và sẽ được ghi vào bản lưu.</p>
+            <div class="preset-grid">
+              @for (preset of controlPresets; track preset.id) {
+                <button type="button" [class.selected]="state().controlPreset === preset.id" [attr.aria-pressed]="state().controlPreset === preset.id" (click)="setControlPreset(preset.id)">
+                  <span>{{ preset.icon }}</span><b>{{ preset.name }}</b><small>{{ preset.description }}</small>
+                  @if (state().controlPreset === preset.id) { <em>✓ Đang dùng</em> }
+                </button>
+              }
+            </div>
+            <div class="binding-list">
+              <span><small>Công cụ trước</small><kbd>{{ selectedControl().bindings.previous.label }}</kbd></span>
+              <span><small>Công cụ sau</small><kbd>{{ selectedControl().bindings.next.label }}</kbd></span>
+              <span><small>Vào / ra nhà</small><kbd>{{ selectedControl().bindings.home.label }}</kbd></span>
+              <span><small>Mở nhật ký</small><kbd>{{ selectedControl().bindings.journal.label }}</kbd></span>
+              <span><small>Mở menu</small><kbd>{{ selectedControl().bindings.menu.label }}</kbd></span>
+            </div>
+          </section>
+        }
+        @case ('journal') {
+          <section class="paper house-panel journal-panel" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="journal-title">
+            <button type="button" class="close" (click)="closePanel()" aria-label="Đóng">×</button>
+            <span class="panel-kicker">CUỐN NHẬT KÝ</span><h2 id="journal-title">Hành trình của {{ state().farmerName }}</h2>
+            <p class="handwriting">“{{ weekday() }}, ngày {{ state().day }} mùa {{ seasons[state().season] }}. Căn nhà nhỏ đang dần trở thành một tổ ấm...”</p>
+            <div class="journal-stats"><span><b>{{ state().money }}G</b> Tiền dành dụm</span><span><b>{{ state().houseLevel }}/3</b> Cấp căn nhà</span><span><b>{{ state().mealsCooked }}</b> Bữa đã nấu</span></div>
+            <div class="save-stamp"><span>TRANG LƯU GẦN NHẤT</span><b>{{ journalSaveLabel() }}</b></div>
+            <div class="panel-actions">
+              <button type="button" class="primary" (click)="saveToJournal()">✒️ Ghi lại hành trình</button>
+              <button type="button" (click)="loadFromJournal()" [disabled]="!journalHasSave()">↶ Đọc trang đã lưu</button>
+            </div>
+            <small class="privacy-note">Bản nhật ký nằm riêng trong trình duyệt này. Bạn vẫn có thể xuất file từ menu ☰.</small>
+          </section>
+        }
+        @case ('television') {
+          <section class="paper house-panel tv-panel" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="tv-title">
+            <button type="button" class="close" (click)="closePanel()" aria-label="Tắt tivi">×</button>
+            <div class="tv-heading"><span>📺</span><div><small>KÊNH 7 · MỘC LAN</small><h2 id="tv-title">Truyền hình nông trại</h2></div><b>ON AIR</b></div>
+            <nav class="channel-tabs" aria-label="Kênh truyền hình" role="tablist">
+              <button type="button" role="tab" [attr.aria-selected]="tvChannel() === 'weather'" [class.active]="tvChannel() === 'weather'" (click)="selectTvChannel('weather')">Dự báo</button>
+              <button type="button" role="tab" [attr.aria-selected]="tvChannel() === 'events'" [class.active]="tvChannel() === 'events'" (click)="selectTvChannel('events')">Sự kiện</button>
+              <button type="button" role="tab" [attr.aria-selected]="tvChannel() === 'shopping'" [class.active]="tvChannel() === 'shopping'" (click)="selectTvChannel('shopping')">Shopping</button>
+            </nav>
+            <div class="tv-content">
+              @if (tvChannel() === 'weather') {
+                <div class="forecast-card"><span>{{ state().tomorrowWeather === 'Nắng' ? '☀️' : '🌧️' }}</span><div><small>DỰ BÁO NGÀY MAI</small><b>{{ state().tomorrowWeather }}</b><p>{{ state().tomorrowWeather === 'Nắng' ? 'Trời trong, thích hợp thu hoạch và dạo quanh làng.' : 'Mưa sẽ tưới toàn bộ cây trồng ngoài đồng.' }}</p></div></div>
+                <div class="news-ticker">Hôm nay: {{ state().weather }} &nbsp;•&nbsp; Ngày mai: {{ state().tomorrowWeather }} &nbsp;•&nbsp; Nhớ chuẩn bị công cụ phù hợp!</div>
+              } @else if (tvChannel() === 'events') {
+                <div class="event-card"><span>{{ nextEvent().icon }}</span><small>SỰ KIỆN SẮP TỚI · MÙA {{ nextEvent().season }}</small><h3>{{ nextEvent().name }}</h3><b>Ngày {{ nextEvent().day }}</b><p>{{ nextEvent().description }}</p></div>
+                <div class="anchor-note">🎙️ “Hãy trò chuyện với mọi người trước ngày hội để không bỏ lỡ phần thưởng đặc biệt!”</div>
+              } @else {
+                @if (isSaturday()) {
+                  <div class="shopping-live"><b>● TRỰC TIẾP THỨ BẢY</b><span>Đặt hàng ngay · Zack giao tận nhà</span></div>
+                  <div class="product-list">
+                    @for (product of tvProducts; track product.id) {
+                      <article><span>{{ product.icon }}</span><div><b>{{ product.name }}</b><small>{{ product.description }}</small></div><strong>{{ product.price }}G</strong>
+                        <button type="button" (click)="buyTvItem(product.id)" [disabled]="state().money < product.price || (!product.repeatable && hasPurchased(product.id))">
+                          {{ !product.repeatable && hasPurchased(product.id) ? 'Đã mua' : 'Đặt mua' }}
+                        </button>
+                      </article>
+                    }
+                  </div>
+                } @else {
+                  <div class="channel-off"><span>📡</span><h3>Chương trình chưa phát sóng</h3><p>Shopping Channel chỉ lên sóng vào <b>Thứ Bảy hàng tuần</b>.</p><small>Hôm nay là {{ weekday() }}. Hãy quay lại đúng lịch nhé!</small></div>
+                }
+              }
+            </div>
+          </section>
+        }
+        @case ('toolbox') {
+          <section class="paper house-panel toolbox-panel" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="toolbox-title">
+            <button type="button" class="close" (click)="closePanel()" aria-label="Đóng">×</button>
+            <span class="panel-kicker">THÙNG DỤNG CỤ</span><h2 id="toolbox-title">Chọn món mang ra đồng</h2>
+            <p class="panel-intro">Tất cả dụng cụ lao động ban đầu đều được cất an toàn ở đây.</p>
+            <div class="chest-resources"><span>🌱 <b>{{ state().seeds }}</b><small>Hạt giống</small></span><span>🥬 <b>{{ state().turnips }}</b><small>Nông sản</small></span><span>🪵 <b>{{ state().wood }}</b><small>Gỗ</small></span></div>
+            <div class="tool-grid">
+              @for (tool of tools; track tool.id) {
+                <button type="button" [class.equipped]="selectedTool() === tool.id" [attr.aria-pressed]="selectedTool() === tool.id" (click)="equipFromChest(tool.id)">
+                  <span>{{ tool.icon }}</span><div><b>{{ tool.label }}</b><small>{{ tool.description }}</small></div><em>{{ selectedTool() === tool.id ? 'Đang cầm' : 'Lấy ra' }}</em>
+                </button>
+              }
+            </div>
+          </section>
+        }
+        @case ('kitchen') {
+          <section class="paper house-panel kitchen-panel" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="kitchen-title">
+            <button type="button" class="close" (click)="closePanel()" aria-label="Đóng">×</button>
+            <span class="panel-kicker">NHÀ BẾP · CẤP 3</span><h2 id="kitchen-title">Hôm nay ăn gì?</h2>
+            <div class="pantry-line"><span>🥬 Nguyên liệu: <b>{{ state().turnips }} củ cải</b></span><span>⚡ Thể lực: <b>{{ state().stamina }}/100</b></span></div>
+            @if (hasPurchased('copper-pan')) { <div class="cooking-bonus">🍳 Bộ nồi đồng: mỗi món hồi thêm 10 thể lực</div> }
+            <div class="recipe-list">
+              @for (recipe of recipes; track recipe.id) {
+                <article><span>{{ recipe.icon }}</span><div><b>{{ recipe.name }}</b><small>{{ recipe.description }}</small><em>🥬 {{ recipe.turnips }} · ⚡ +{{ recipe.energy + (hasPurchased('copper-pan') ? 10 : 0) }}</em></div>
+                  <button type="button" (click)="cook(recipe.id)" [disabled]="state().turnips < recipe.turnips || state().stamina >= 100">Nấu & dùng bữa</button>
+                </article>
+              }
+            </div>
+          </section>
+        }
+        @case ('upgrade') {
+          <section class="paper house-panel upgrade-panel" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="upgrade-title">
+            <button type="button" class="close" (click)="closePanel()" aria-label="Đóng">×</button>
+            <span class="panel-kicker">BẢN VẼ CỦA GOTZ</span><h2 id="upgrade-title">Nâng cấp căn nhà</h2>
+            <div class="level-track"><span class="done"><b>1</b>Nhà nhỏ</span><i></i><span [class.done]="state().houseLevel >= 2"><b>2</b>Mở rộng</span><i></i><span [class.done]="state().houseLevel === 3"><b>3</b>Tổ ấm</span></div>
+            @if (upgradePlan(); as plan) {
+              <div class="blueprint"><span>🏗️</span><div><small>NÂNG LÊN CẤP {{ plan.level }}</small><h3>{{ plan.title }}</h3><p>{{ plan.detail }}</p></div></div>
+              <div class="upgrade-cost"><span [class.missing]="state().money < plan.money">🪙 <b>{{ plan.money }}G</b><small>Bạn có {{ state().money }}G</small></span><span [class.missing]="state().wood < plan.wood">🪵 <b>{{ plan.wood }} Gỗ</b><small>Bạn có {{ state().wood }}</small></span></div>
+              <button type="button" class="build-button" (click)="upgradeHouse()" [disabled]="state().money < plan.money || state().wood < plan.wood">Nhờ Gotz xây ngay</button>
+            } @else {
+              <div class="max-house"><span>🏡</span><h3>Ngôi nhà đã hoàn thiện!</h3><p>Nhà bếp, giường đôi và không gian gia đình đều đã sẵn sàng.</p></div>
+            }
+          </section>
+        }
+      }
+    </div>
   }
 </main>

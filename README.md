@@ -19,9 +19,22 @@ Mở `http://localhost:4200`.
 4. Chọn **Tay không** để thu hoạch, sau đó bấm **Thùng hàng** để bán.
 5. Dùng **Rìu** chặt gỗ, ghé cửa hàng mua hạt và trò chuyện với Ellie.
 
+## Căn nhà
+
+Bấm vào căn nhà ngoài nông trại để bước vào không gian sinh hoạt:
+
+- **Giường đơn** giúp ngủ qua đêm, hồi thể lực và chuyển sang ngày mới.
+- **Kệ sách** đổi giữa ba bộ phím điều khiển; lựa chọn được lưu cùng tiến trình.
+- **Nhật ký** lưu và tải nhanh một ô save ngay trong trình duyệt.
+- **Tivi** phát dự báo ngày mai, lịch lễ hội và Shopping Channel vào mỗi Thứ Bảy.
+- **Thùng dụng cụ** cất toàn bộ công cụ, hạt giống và tài nguyên ban đầu.
+- Nâng nhà lên **cấp 3** để mở khóa nhà bếp, giường đôi và góc gia đình.
+
+Muốn nâng cấp nhà, hãy tích lũy tiền và gỗ rồi chọn **Nâng cấp** trên bảng trong nhà.
+
 ## Lưu và tải game
 
-Mở menu `☰`:
+Mở **cuốn nhật ký** trong nhà để lưu nhanh vào trình duyệt. Ngoài ra, menu `☰` cho phép:
 
 - **Lưu game xuống máy** tải một file `.save.json` về ổ cứng.
 - **Tải file save** đọc lại file đã lưu, không cần máy chủ hay tài khoản.

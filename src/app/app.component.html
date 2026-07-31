@@ -1,32 +1,47 @@
-<main class="page">
-  <section class="hero">
-    <h1>Angular Lifecycle Demo: <code>constructor()</code></h1>
-    <p>
-      Click the button to destroy and recreate the child component.
-      Every recreation triggers the child's <code>constructor()</code> and adds a new log entry.
-    </p>
-    <button type="button" (click)="recreateChild()">Recreate child component</button>
-  </section>
+<main class="game-shell">
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">🌿</span><div><strong>MỘC LAN</strong><small>FARM STORY</small></div></div>
+    <div class="day-card"><span>{{ state().weather === 'Nắng' ? '☀️' : '🌧️' }}</span><div><b>{{ seasons[state().season] }} · Ngày {{ state().day }}</b><small>Năm {{ state().year }} &nbsp; {{ clock() }}</small></div></div>
+    <div class="status"><div class="money">🪙 <b>{{ state().money }}</b><small> G</small></div><div class="energy"><span>THỂ LỰC</span><div class="meter"><i [style.width.%]="state().stamina"></i></div><b>{{ state().stamina }}</b></div></div>
+    <button class="menu-button" type="button" (click)="showMenu.set(!showMenu())" aria-label="Mở menu">☰</button>
+  </header>
 
-  <section class="visualization">
-    <h2>Live constructor visualization</h2>
-    @if (showChild()) {
-      <constructor-child (constructed)="onChildConstructed($event)"></constructor-child>
-    } @else {
-      <p class="placeholder">Child component destroyed. Angular will recreate it immediately...</p>
-    }
-  </section>
+  <section class="storybar"><span class="portrait">👴🏻</span><div><b>Thị trưởng Thomas</b><p>“Cháu có 3 năm để khôi phục nông trại này. Hãy khiến dân làng tự hào nhé!”</p></div><button type="button" (click)="showGuide.set(true)">Nhật ký nhiệm vụ ›</button></section>
 
-  <section class="log">
-    <h2>Execution log</h2>
-    <ol>
-      @for (entry of entries(); track $index) {
-        <li>
-          <span class="time">{{ entry.timestamp }}</span>
-          <strong>{{ entry.source }}</strong>
-          <span>{{ entry.message }}</span>
-        </li>
+  <section class="world" aria-label="Nông trại Mộc Lan">
+    <div class="mountains"></div><div class="cloud cloud-one">☁</div><div class="cloud cloud-two">☁</div>
+    <div class="farmhouse"><div class="roof"></div><div class="chimney"></div><div class="house-face"><span class="window">✦</span><span class="door">🚪</span></div><div class="house-sign">MỘC LAN</div></div>
+    <div class="tree tree-a">🌳</div><div class="tree tree-b">🌳</div><div class="tree tree-c">🌲</div>
+    <button class="ellie character" type="button" (click)="talkToEllie()"><span>♥</span>👩🏻‍🌾<small>Ellie</small></button>
+    <div class="farmer character">🧑🏻‍🌾<small>{{ state().farmerName }}</small></div>
+    <button class="log-pile" type="button" (click)="chopWood()">🪵<small>Gỗ +2</small></button>
+    <div class="field" aria-label="Ruộng trồng cây">
+      @for (plot of state().plots; track plot.id) {
+        <button type="button" class="plot" [class]="'plot ' + plot.state" [class.watered]="plot.watered" (click)="interact(plot.id)" [attr.aria-label]="'Ô đất ' + (plot.id + 1)">
+          @if (plot.state === 'seeded') { <span>· · ·</span> }
+          @if (plot.state === 'growing') { <span>🌱</span> }
+          @if (plot.state === 'ready') { <span>🥬</span> }
+        </button>
       }
-    </ol>
+    </div>
+    <div class="pond">🐟<span></span></div>
+    <button class="shipping" type="button" (click)="sellProduce()"><span>📦</span><b>THÙNG HÀNG</b><small>Bán {{ state().turnips }} củ cải</small></button>
+    <button class="shop" type="button" (click)="buySeeds()"><span>🛒</span><b>CỬA HÀNG</b><small>6 hạt · 120G</small></button>
+    <div class="fence">╫ ╫ ╫ ╫ ╫ ╫ ╫ ╫ ╫ ╫ ╫ ╫</div>
   </section>
+
+  <section class="message"><span class="message-icon">💬</span><p>{{ notice() }}</p><div class="inventory"><span title="Hạt giống">🌱 {{ state().seeds }}</span><span title="Củ cải">🥬 {{ state().turnips }}</span><span title="Gỗ">🪵 {{ state().wood }}</span><span title="Tình cảm Ellie">♥ {{ state().affection }}</span></div></section>
+
+  <nav class="toolbar" aria-label="Túi công cụ">
+    <div class="tool-title"><small>TÚI ĐỒ</small><b>{{ selectedLabel() }}</b></div>
+    @for (tool of tools; track tool.id) { <button type="button" [class.active]="selectedTool() === tool.id" (click)="selectTool(tool.id)" [title]="tool.label"><span>{{ tool.icon }}</span><small>{{ tool.label }}</small></button> }
+    <button class="sleep" type="button" (click)="nextDay()"><span>🌙</span><small>Đi ngủ</small></button>
+  </nav>
+
+  @if (showMenu()) {
+    <div class="overlay" (click)="showMenu.set(false)"><section class="paper menu" (click)="$event.stopPropagation()"><button class="close" (click)="showMenu.set(false)">×</button><h2>🌿 Tạm dừng</h2><p>Nông trại Mộc Lan · Ngày {{ state().day }}</p><button (click)="saveGame()">💾 Lưu game xuống máy</button><label>📂 Tải file save<input type="file" accept=".json,.save" (change)="loadGame($event)"></label><button class="danger" (click)="newGame()">↻ Chơi lại từ đầu</button></section></div>
+  }
+  @if (showGuide()) {
+    <div class="overlay" (click)="showGuide.set(false)"><section class="paper guide" (click)="$event.stopPropagation()"><button class="close" (click)="showGuide.set(false)">×</button><span class="leaf">🌿</span><h2>Nhật ký nông trại</h2><p class="subtitle">MÙA XUÂN · NĂM 1</p><ul><li class="done">✓ Đến nhận nông trại từ Thị trưởng</li><li [class.done]="state().plots[0].state !== 'tilled'">Trồng vụ củ cải đầu tiên</li><li [class.done]="state().turnips > 0 || state().money > 500">Thu hoạch và bán nông sản</li><li [class.done]="state().affection >= 10">Kết bạn với người dân làng ({{ state().affection }}/10)</li></ul><div class="tip">💡 <span><b>Mẹo nhỏ</b><br>Cuốc đất → gieo hạt → tưới nước mỗi ngày. Sau 3 ngày, dùng Tay không để thu hoạch.</span></div></section></div>
+  }
 </main>

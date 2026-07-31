@@ -1,12 +1,4 @@
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  background: #020617;
-}
-
-code {
-  font-family: 'JetBrains Mono', Consolas, monospace;
-}
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body { background: #233f24; }
+button:focus-visible, label:focus-visible { outline: 3px solid #ffe474; outline-offset: 2px; }

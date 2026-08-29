@@ -149,6 +149,47 @@ describe('AppComponent house feature', () => {
     expect(root.querySelector('[aria-label="Gia đình của bạn"]')).not.toBeNull();
   });
 
+  it('unlocks the family bed and kitchen after upgrading the house from level 2 to level 3', () => {
+    localStorage.setItem('moc-lan-farm-journal-v2', JSON.stringify({
+      game: 'Moc Lan Farm',
+      version: 2,
+      savedAt: '2026-07-31T12:00:00.000Z',
+      state: validSavedState({ houseLevel: 2, money: 1000, wood: 30 })
+    }));
+    renderGame();
+    enterHouse();
+    click('.journal-table');
+    (root.querySelectorAll<HTMLButtonElement>('.journal-panel button')[2] as HTMLButtonElement).click();
+    fixture.detectChanges();
+    click('.journal-panel .close');
+
+    expect(root.querySelector('[aria-label="Ngá»§ trÃªn chiáº¿c giÆ°á»ng Ä‘Ã´i cá»§a gia Ä‘Ã¬nh"]')).toBeNull();
+    expect(root.querySelector('[aria-label="VÃ o nhÃ  báº¿p Ä‘á»ƒ náº¥u Äƒn"]')).toBeNull();
+
+    click('.level-plaque button');
+    click('.upgrade-panel .build-button');
+
+    expect(root.querySelector('.house-world.house-family')).not.toBeNull();
+    expect(root.querySelector('.family-bed')).not.toBeNull();
+    expect(root.querySelector('.kitchen')).not.toBeNull();
+    expect(root.querySelector('.locked-extension')).toBeNull();
+  });
+
+  it('rejects a journal save that is missing the house level instead of silently downgrading progress', () => {
+    localStorage.setItem('moc-lan-farm-journal-v2', JSON.stringify({
+      game: 'Moc Lan Farm',
+      version: 2,
+      savedAt: '2026-07-31T12:00:00.000Z',
+      state: validSavedState({ houseLevel: undefined })
+    }));
+    renderGame();
+    enterHouse();
+    click('.journal-table');
+
+    const loadButton = root.querySelector<HTMLButtonElement>('.journal-panel .panel-actions button:last-child');
+    expect(loadButton?.disabled).toBeTrue();
+  });
+
   it('rejects a partial journal save instead of replacing the current run with defaults', () => {
     localStorage.setItem('moc-lan-farm-journal-v2', JSON.stringify({
       game: 'Moc Lan Farm', version: 2, savedAt: 'not-a-date', state: {}

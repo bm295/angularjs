@@ -218,6 +218,7 @@ function isRecognizableGameState(value: unknown): value is Partial<GameState> {
   const numericFields = ['day', 'season', 'year', 'time', 'money', 'stamina', 'wood', 'seeds', 'turnips', 'affection'];
   return Array.isArray(state['plots'])
     && state['plots'].length === FRESH_GAME.plots.length
+    && (state['houseLevel'] === 1 || state['houseLevel'] === 2 || state['houseLevel'] === 3)
     && numericFields.every(field => Number.isFinite(state[field]));
 }
 
